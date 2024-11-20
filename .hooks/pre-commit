@@ -1,34 +1,63 @@
 #!/usr/bin/env bash
 
+# rust fmt
 if ! command -v rustfmt &> /dev/null; then
-        printf "[pre_commit] \033[0;31merror\033[0m: \"rustfmt\" not available. \n"
-        printf "[pre_commit] \033[0;31merror\033[0m: rustfmt can be installed via - \n"
-        printf "[pre_commit] $ rustup component add rustfmt \n"
-        exit 1
+  printf "[pre_commit] \033[0;31merror\033[0m: \"rustfmt\" not available. \n"
+  printf "[pre_commit] \033[0;31merror\033[0m: rustfmt can be installed via - \n"
+  printf "[pre_commit] $ rustup component add rustfmt \n"
+  exit 1
 fi
 
-problem_files=()
+# nix fmt
+if ! command -v nix fmt &> /dev/null; then
+  printf "[pre_commit] \033[0;31merror\033[0m: \"nix fmt\" not available. \n"
+  exit 1
+fi
 
-# collect ill-formatted files
+# collect ill-formatted rust files
+problem_rust_files=()
+
 for file in $(git diff --name-only --cached); do
-        if [ "${file: -3}" == ".rs" ]; then
-                if rustfmt +stable --check "$file" &>/dev/null; then
-                        problem_files+=("$file")
-                fi
-        fi
+  if [ "${file: -3}" == ".rs" ]; then
+    if rustfmt +stable --check "$file" &>/dev/null; then
+      problem_rust_files+=("$file")
+    fi
+  fi
 done
 
-if [ ${#problem_files[@]} == 0 ]; then
+# collect ill-formatted nix files
+problem_nix_files=()
+
+for file in $(git diff --name-only --cached); do
+  if [ "${file: -3}" == ".nix" ]; then
+    if nix fmt &>/dev/null; then
+      problem_nix_files+=("$file")
+    fi
+  fi
+done
+
+if [ ${#problem_rust_files[@]} == 0 ] && [ ${#problem_nix_files[@]} == 0 ]; then
   # done
   printf "[pre_commit] rustfmt \033[0;32mok\033[0m \n"
+  printf "[pre_commit] nix fmt \033[0;32mok\033[0m \n"
 else
   # reformat the files that need it and re-stage them.
-  printf "[pre_commit] the following files were rustfmt'd before commit: \n"
-  for file in "${problem_files[@]}"; do
-    rustfmt +stable "$file"
-    git add "$file"
-    printf "\033[0;32m    %s\033[0m \n" "$file"
-  done
+  if [ ${#problem_rust_files[@]} != 0 ]; then
+    printf "[pre_commit] the following files were rustfmt'd before commit: \n"
+    for file in "${problem_rust_files[@]}"; do
+      rustfmt +stable "$file"
+      git add "$file"
+      printf "\033[0;32m    %s\033[0m \n" "$file"
+    done
+  fi
+
+  if [ ${#problem_nix_files[@]} != 0 ]; then
+    printf "[pre_commit] the following files were nix fmt'd before commit: \n"
+    for file in "${problem_nix_files[@]}"; do
+      git add "$file"
+      printf "\033[0;32m    %s\033[0m \n" "$file"
+    done
+  fi
 fi
 
 exit 0
