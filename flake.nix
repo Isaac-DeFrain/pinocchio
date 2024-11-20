@@ -18,6 +18,9 @@
 
       pkgs = import nixpkgs {inherit system overlays;};
 
+      # format with alejandra
+      formatter.system = pkgs.legacyPackages.x86_64-linux.alejandra;
+
       rust = pkgs.rust-bin.fromRustupToolchainFile ./rust-toolchain.toml;
 
       rustPlatform = pkgs.makeRustPlatform {
@@ -53,6 +56,7 @@
           just
           nightlyToolchain.passthru.availableComponents.rustfmt
           rust
+          shfmt
         ]
         ++ buildDependencies;
 
@@ -63,7 +67,7 @@
           pinocchio = rustPlatform.buildRustPackage rec {
             meta = with lib; {
               description = ''
-                Hello pinocchio!
+                pinocchio
               '';
             #   homepage = "https://github.com/Isaac-DeFrain/pinocchio";
             #   license = licenses.asl20;

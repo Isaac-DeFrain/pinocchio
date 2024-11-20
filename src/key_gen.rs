@@ -1,4 +1,4 @@
-pub trait KeyGen<I, O> {
+pub trait KeyGen {
     const SEC_PARAM: usize;
 
     /// evaluation key
