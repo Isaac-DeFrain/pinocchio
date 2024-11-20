@@ -35,7 +35,7 @@
           cargo-nextest
           clang
           libclang.lib
-          mold-wrapped # https://github.com/rui314/mold#mold-a-modern-linker
+          mold-wrapped
           pkg-config
           rustPlatform.bindgenHook
         ]
@@ -57,6 +57,7 @@
           nightlyToolchain.passthru.availableComponents.rustfmt
           rust
           shfmt
+          mdformat
         ]
         ++ buildDependencies;
 
@@ -69,10 +70,10 @@
               description = ''
                 pinocchio
               '';
-            #   homepage = "https://github.com/Isaac-DeFrain/pinocchio";
-            #   license = licenses.asl20;
-            #   mainProgram = "pinocchio";
-            #   platforms = platforms.all;
+              homepage = "https://github.com/Isaac-DeFrain/pinocchio";
+              # license = licenses.asl20;
+              mainProgram = "pinocchio";
+              platforms = platforms.all;
               maintainers = [];
             };
 
