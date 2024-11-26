@@ -71,7 +71,7 @@
                 pinocchio
               '';
               homepage = "https://github.com/Isaac-DeFrain/pinocchio";
-              # license = licenses.asl20;
+              license = licenses.asl20;
               mainProgram = "pinocchio";
               platforms = platforms.all;
               maintainers = [];
@@ -114,18 +114,6 @@
           };
 
           default = pinocchio;
-
-        #   dockerImage = pkgs.dockerTools.buildImage {
-        #     name = "pinocchio";
-        #     created = "now";
-        #     tag = builtins.substring 0 8 (self.rev or "dev");
-        #     copyToRoot = pkgs.buildEnv {
-        #       paths = with pkgs; [pinocchio bash self];
-        #       name = "pinocchio-root";
-        #       pathsToLink = ["/bin" "/share"];
-        #     };
-        #     config.Cmd = ["${pkgs.lib.getExe pinocchio}"];
-        #   };
         };
 
         devShells.default = mkShell {
