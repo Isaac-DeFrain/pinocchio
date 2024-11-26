@@ -1,4 +1,4 @@
-use crate::proof::Proof;
+use crate::traits::proof::Proof;
 
 pub trait Verify {
     /// verification key
